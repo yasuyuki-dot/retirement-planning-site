@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リタイアメントプランニング総合サイト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.2em;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+        
+        .quick-search {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .category-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .category-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .category-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+        .category-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .category-topics {
+            list-style: none;
+        }
+        
+        .category-topics li {
+            padding: 8px 0;
+            color: #718096;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .category-topics li:hover {
+            color: #667eea;
+        }
+        
+        .category-topics li:last-child {
+            border-bottom: none;
+        }
+        
+        .tools-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tools-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2d3748;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .tool-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .modal h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .modal h3 {
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+        
+        .modal p, .modal li {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .modal ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .calculator {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .calc-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .calc-result {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .quick-search {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                padding: 20px;
+                max-width: calc(100% - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🏖️ リタイアメントナビ</div>
+            <div class="tagline">定年前後のお悩み解決！年金・保険・税金の総合情報サイト</div>
+            <div class="quick-search">
+                <input type="text" class="search-input" placeholder="気になるキーワードを検索（例：年金受給開始、健康保険切り替え）">
+                <button class="search-btn" onclick="performSearch()">🔍 検索</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="category-card" onclick="openModal('pension')">
+                <div class="category-icon">💰</div>
+                <div class="category-title">年金制度</div>
+                <div class="category-description">国民年金・厚生年金の受給手続きから、受給額の計算まで詳しく解説</div>
+                <ul class="category-topics">
+                    <li onclick="event.stopPropagation(); openModal('pension-start')">年金受給開始手続き</li>
+                    <li onclick="event.stopPropagation(); openModal('pension-amount')">受給額の計算方法</li>
+                    <li onclick="event.stopPropagation(); openModal('pension-timing')">受給開始時期の選択</li>
+                    <li onclick="event.stopPropagation(); openModal('pension-tax')">年金と税金の関係</li>
+                </ul>
+            </div>
+            
+            <div class="category-card" onclick="openModal('insurance')">
+                <div class="category-icon">🏥</div>
+                <div class="category-title">健康保険・介護保険</div>
+                <div class="category-description">退職後の健康保険切り替えや介護保険について分かりやすく説明</div>
+                <ul class="category-topics">
+                    <li onclick="event.stopPropagation(); openModal('health-switch')">健康保険の切り替え</li>
+                    <li onclick="event.stopPropagation(); openModal('national-insurance')">国民健康保険への加入</li>
+                    <li onclick="event.stopPropagation(); openModal('care-insurance')">介護保険制度</li>
+                    <li onclick="event.stopPropagation(); openModal('medical-costs')">医療費控除</li>
+                </ul>
+            </div>
+            
+            <div class="category-card" onclick="openModal('tax')">
+                <div class="category-icon">📋</div>
+                <div class="category-title">税金・確定申告</div>
+                <div class="category-description">退職金の税金、年金受給者の確定申告など税務に関する情報</div>
+                <ul class="category-topics">
+                    <li onclick="event.stopPropagation(); openModal('retirement-tax')">退職金の税金</li>
+                    <li onclick="event.stopPropagation(); openModal('pension-tax-return')">年金受給者の確定申告</li>
+                    <li onclick="event.stopPropagation(); openModal('tax-deductions')">各種控除の活用</li>
+                    <li onclick="event.stopPropagation(); openModal('resident-tax')">住民税の仕組み</li>
+                </ul>
+            </div>
+            
+            <div class="category-card" onclick="openModal('social')">
+                <div class="category-icon">🤝</div>
+                <div class="category-title">社会保険・雇用保険</div>
+                <div class="category-description">失業給付、再雇用制度など、働き続ける方への支援制度</div>
+                <ul class="category-topics">
+                    <li onclick="event.stopPropagation(); openModal('unemployment')">失業給付の手続き</li>
+                    <li onclick="event.stopPropagation(); openModal('reemployment')">再雇用制度</li>
+                    <li onclick="event.stopPropagation(); openModal('part-time-work')">年金受給中の働き方</li>
+                    <li onclick="event.stopPropagation(); openModal('social-insurance-change')">社会保険の変更手続き</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="tools-section">
+            <div class="tools-title">🔧 便利ツール</div>
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openModal('pension-calculator')">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-name">年金受給額計算</div>
+                    <div>あなたの年金受給額を簡単計算</div>
+                </div>
+                <div class="tool-card" onclick="openModal('retirement-checklist')">
+                    <div class="tool-icon">✅</div>
+                    <div class="tool-name">退職手続きチェックリスト</div>
+                    <div>忘れがちな手続きを確認</div>
+                </div>
+                <div class="tool-card" onclick="openModal('tax-simulator')">
+                    <div class="tool-icon">🧮</div>
+                    <div class="tool-name">税金シミュレーター</div>
+                    <div>退職後の税金をシミュレーション</div>
+                </div>
+                <div class="tool-card" onclick="openModal('contact-info')">
+                    <div class="tool-icon">📞</div>
+                    <div class="tool-name">相談窓口一覧</div>
+                    <div>各種手続きの相談先</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- モーダルウィンドウ -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    
+    <script>
+        // モーダルコンテンツのデータ
+        const modalData = {
+            'pension': {
+                title: '年金制度について',
+                content: `
+                    <h3>🏛️ 日本の年金制度の仕組み</h3>
+                    <p>日本の年金制度は「3階建て」と呼ばれる構造になっています：</p>
+                    <ul>
+                        <li><strong>1階部分：国民年金（基礎年金）</strong> - 全国民共通の基礎的な年金</li>
+                        <li><strong>2階部分：厚生年金</strong> - 会社員・公務員が加入する年金</li>
+                        <li><strong>3階部分：企業年金等</strong> - 企業が独自に設ける年金制度</li>
+                    </ul>
+                    
+                    <h3>📅 年金受給開始年齢</h3>
+                    <p>原則として65歳から受給開始ですが、以下の選択肢があります：</p>
+                    <ul>
+                        <li><strong>繰り上げ受給：</strong> 60歳〜64歳（受給額は減額）</li>
+                        <li><strong>通常受給：</strong> 65歳（満額受給）</li>
+                        <li><strong>繰り下げ受給：</strong> 66歳〜75歳（受給額は増額）</li>
+                    </ul>
+                    
+                    <h3>💡 受給手続きのポイント</h3>
+                    <p>年金受給の手続きは、受給開始予定日の3ヶ月前から可能です。必要書類を事前に準備しておきましょう。</p>
+                `
+            },
+            'pension-calculator': {
+                title: '年金受給額計算ツール',
+                content: `
+                    <h3>💰 年金受給額を簡単計算</h3>
+                    <p>以下の情報を入力して、おおよその年金受給額を計算してみましょう。</p>
+                    
+                    <div class="calculator">
+                        <label>生年月日：</label>
+                        <input type="date" class="calc-input" id="birthDate">
+                        
+                        <label>厚生年金加入期間（年）：</label>
+                        <input type="number" class="calc-input" id="workYears" placeholder="例：40">
+                        
+                        <label>平均年収（万円）：</label>
+                        <input type="number" class="calc-input" id="averageIncome" placeholder="例：500">
+                        
+                        <button class="search-btn" onclick="calculatePension()" style="width: 100%; margin-top: 15px;">計算する</button>
+                        
+                        <div id="pensionResult" class="calc-result" style="display: none;"></div>
+                    </div>
+                    
+                    <p><small>※この計算はあくまで目安です。正確な金額は年金事務所でご確認ください。</small></p>
+                `
+            },
+            'retirement-checklist': {
+                title: '退職手続きチェックリスト',
+                content: `
+                    <h3>📋 退職前後の手続き一覧</h3>
+                    
+                    <h4>🔸 退職前（1〜3ヶ月前）</h4>
+                    <ul>
+                        <li>□ 退職日の決定と会社への通知</li>
+                        <li>□ 有給休暇の消化計画</li>
+                        <li>□ 退職金の確認</li>
+                        <li>□ 企業年金の手続き確認</li>
+                        <li>□ 健康保険の継続可否確認</li>
+                    </ul>
+                    
+                    <h4>🔸 退職時</h4>
+                    <ul>
+                        <li>□ 離職票の受け取り</li>
+                        <li>□ 雇用保険被保険者証の受け取り</li>
+                        <li>□ 年金手帳の受け取り</li>
+                        <li>□ 健康保険証の返却</li>
+                        <li>□ 源泉徴収票の受け取り</li>
+                    </ul>
+                    
+                    <h4>🔸 退職後（14日以内）</h4>
+                    <ul>
+                        <li>□ 国民年金への加入手続き</li>
+                        <li>□ 国民健康保険への加入手続き</li>
+                        <li>□ 失業給付の申請（該当者）</li>
+                        <li>□ 住民税の納付方法変更</li>
+                    </ul>
+                    
+                    <p><strong>💡 ワンポイントアドバイス：</strong><br>
+                    手続きは市区町村役場、年金事務所、ハローワークなど複数の機関にまたがります。事前に必要書類と手続き場所を確認しておくと効率的です。</p>
+                `
+            },
+            'tax-simulator': {
+                title: '税金シミュレーター',
+                content: `
+                    <h3>🧮 退職後の税金シミュレーション</h3>
+                    
+                    <div class="calculator">
+                        <h4>年金収入</h4>
+                        <label>年金年額（万円）：</label>
+                        <input type="number" class="calc-input" id="pensionIncome" placeholder="例：200">
+                        
+                        <h4>その他収入</h4>
+                        <label>給与・その他収入（万円）：</label>
+                        <input type="number" class="calc-input" id="otherIncome" placeholder="例：100">
+                        
+                        <h4>控除</h4>
+                        <label>配偶者：</label>
+                        <select class="calc-input" id="spouse">
+                            <option value="none">なし</option>
+                            <option value="yes">あり（70歳未満）</option>
+                            <option value="elderly">あり（70歳以上）</option>
+                        </select>
+                        
+                        <button class="search-btn" onclick="calculateTax()" style="width: 100%; margin-top: 15px;">税金を計算する</button>
+                        
+                        <div id="taxResult" class="calc-result" style="display: none;"></div>
+                    </div>
+                    
+                    <h3>📊 税金の種類と特徴</h3>
+                    <ul>
+                        <li><strong>所得税：</strong> 国に納める税金</li>
+                        <li><strong>住民税：</strong> 都道府県・市区町村に納める税金</li>
+                        <li><strong>年金受給者の特例：</strong> 公的年金等控除により一定額が控除されます</li>
+                    </ul>
+                `
+            }
+        };
+        
+        function openModal(contentKey) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            if (modalData[contentKey]) {
+                modalBody.innerHTML = `<h2>${modalData[contentKey].title}</h2>${modalData[contentKey].content}`;
+                modal.style.display = 'block';
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        
+        // モーダル外クリックで閉じる
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function performSearch() {
+            const searchTerm = document.querySelector('.search-input').value;
+            if (searchTerm) {
+                alert(`「${searchTerm}」の検索結果を表示します。\n\n実際のサイトでは、ここで関連する記事や情報が表示されます。`);
+            }
+        }
+        
+        function calculatePension() {
+            const birthDate = document.getElementById('birthDate').value;
+            const workYears = parseInt(document.getElementById('workYears').value) || 0;
+            const averageIncome = parseInt(document.getElementById('averageIncome').value) || 0;
+            
+            if (!birthDate || workYears === 0 || averageIncome === 0) {
+                alert('すべての項目を入力してください。');
+                return;
+            }
+            
+            // 簡易計算（実際の計算式は複雑）
+            const basicPension = 78; // 国民年金満額（概算）
+            const employeePension = (averageIncome * workYears * 0.005481) / 1000; // 厚生年金概算
+            const totalPension = Math.round((basicPension + employeePension) * 12);
+            
+            const resultDiv = document.getElementById('pensionResult');
+            resultDiv.innerHTML = `
+                <strong>年金受給額（年間概算）</strong><br>
+                国民年金：約${Math.round(basicPension * 12)}万円<br>
+                厚生年金：約${Math.round(employeePension * 12)}万円<br>
+                <strong>合計：約${totalPension}万円</strong>
+            `;
+            resultDiv.style.display = 'block';
+        }
+        
+        function calculateTax() {
+            const pensionIncome = parseInt(document.getElementById('pensionIncome').value) || 0;
+            const otherIncome = parseInt(document.getElementById('otherIncome').value) || 0;
+            const spouse = document.getElementById('spouse').value;
+            
+            if (pensionIncome === 0 && otherIncome === 0) {
+                alert('収入額を入力してください。');
+                return;
+            }
+            
+            // 簡易計算
+            const totalIncome = pensionIncome + otherIncome;
+            const pensionDeduction = Math.min(pensionIncome * 0.25 + 37.5, 110); // 公的年金等控除（簡易）
+            const basicDeduction = 48; // 基礎控除
+            const spouseDeduction = spouse === 'yes' ? 38 : spouse === 'elderly' ? 48 : 0;
+            
+            const taxableIncome = Math.max(0, totalIncome - pensionDeduction - basicDeduction - spouseDeduction);
+            const incomeTax = Math.round(taxableIncome * 0.05); // 簡易計算
+            const residentTax = Math.round(taxableIncome * 0.1); // 簡易計算
+            
+            const resultDiv = document.getElementById('taxResult');
+            resultDiv.innerHTML = `
+                <strong>税金概算（年額）</strong><br>
+                課税所得：約${Math.round(taxableIncome)}万円<br>
+                所得税：約${incomeTax}万円<br>
+                住民税：約${residentTax}万円<br>
+                <strong>税金合計：約${incomeTax + residentTax}万円</strong>
+            `;
+            resultDiv.style.display = 'block';
+        }
+        
+        // キーボードショートカット
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
